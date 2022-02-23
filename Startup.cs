@@ -51,6 +51,23 @@ namespace WaterProject
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "typepage",
+                    pattern: "{projectType}/Page{pageNum}",
+                    defaults: new { Controller = "Home", action = "Index" });
+
+                endpoints.MapControllerRoute(
+                    name: "Paging",
+                    pattern: "Page{pageNum}",
+                    defaults: new { Controller = "Home", action = "Index", pageNume = 1 });
+
+                endpoints.MapControllerRoute(
+                    name: "type",
+                    pattern: "{projectType}",
+                    defaults: new { Controller = "Home", action = "Index", pageNum = 1 });
+
+
+
                 endpoints.MapDefaultControllerRoute();
             });
         }
