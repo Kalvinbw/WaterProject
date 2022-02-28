@@ -12,31 +12,34 @@ namespace WaterProject.Pages
     public class DonateModel : PageModel
     {
         private IWaterProjectRepository repo { get; set; }
-
-
-        public DonateModel(IWaterProjectRepository temp)
-        {
-            repo = temp;
-        }
-
         public Basket basket { get; set; }
         public string ReturnUrl { get; set; }
 
+
+        public DonateModel(IWaterProjectRepository temp, Basket b)
+        {
+            repo = temp;
+            basket = b;
+
+        }
+
         public void OnGet(string returnUrl)
         {
-            ReturnUrl = returnUrl ?? "/";
-            basket = HttpContext.Session.GetJson<Basket>("basket") ?? new Basket();
+            ReturnUrl = returnUrl ?? "/";            
         }
 
         public IActionResult OnPost(int projectId, string returnUrl)
         {
-            Project p = repo.Projects.FirstOrDefault(x => x.ProjectId == projectId);
+            Project p = repo.Projects.FirstOrDefault(x => x.ProjectId == projectId);         
 
-            basket = HttpContext.Session.GetJson<Basket>("basket") ??  new Basket();
+            basket.AddItem(p, 1);            
 
-            basket.AddItem(p, 1);
+            return RedirectToPage(new { ReturnUrl = returnUrl } );
+        }
 
-            HttpContext.Session.SetJson("basket", basket);
+        public IActionResult OnPostRemove (int projectId, string returnUrl)
+        {
+            basket.RemoveItem(basket.Items.First(x => x.Project.ProjectId == projectId).Project);
 
             return RedirectToPage(new { ReturnUrl = returnUrl } );
         }
